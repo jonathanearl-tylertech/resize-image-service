@@ -20,6 +20,16 @@ class Storage {
         this.s3 = new S3(this.config as ClientConfiguration);
     }
 
+    async presignedUrl(key: string) {
+        const options = {
+            Bucket: this.bucket,
+            Key: key,
+            Expires: 60 * 60,
+            ContentType: 'image/*'
+        };
+        return await this.s3.getSignedUrl('putObject', options);
+    }
+
     async listFiles(key: string): Promise<string[]> {
         var params = { Bucket: this.bucket, Prefix: key };
         var response = await this.s3.listObjectsV2(params).promise();
