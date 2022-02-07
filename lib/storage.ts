@@ -20,15 +20,31 @@ class Storage {
         this.s3 = new S3(this.config as ClientConfiguration);
     }
 
+    async listFiles(key: string): Promise<string[]> {
+        var params = { Bucket: this.bucket, Prefix: key };
+        var response = await this.s3.listObjectsV2(params).promise();
+        var objects = response.Contents as S3.ObjectList;
+
+        if (!objects || objects.length == 0) return [];
+        return objects
+            .sort((a, b) => (a.LastModified as Date).getTime()- (b.LastModified as Date).getTime())
+            .map(obj => obj.Key as string);
+    }
+
     async getFile(key: string): Promise<Buffer> {
-        var params = { Bucket: this.bucket, Key: key}
-        var response = await this.s3.getObject(params).promise();
+        var options = { Bucket: this.bucket, Key: key}
+        var response = await this.s3.getObject(options).promise();
         return response.Body as Buffer;
     }
 
     async putFile(key: string, file: Buffer) {
-        var putOptions = { Bucket: this.bucket, Key: key, Body: file };
-        await this.s3.putObject(putOptions).promise();
+        var options = { Bucket: this.bucket, Key: key, Body: file };
+        await this.s3.putObject(options).promise();
+    }
+
+    async deleteFile(key: string) {
+        var options = { Bucket: this.bucket, Key: key };
+        await this.s3.deleteObject(options).promise();
     }
 }
 
