@@ -1,0 +1,32 @@
+services:
+  svc:
+    build: .
+    ports:
+      - 5010:5010
+    env_file:
+      - ./development.env
+    volumes:
+      - ./service/:/app/
+    command: npm start
+
+  minio:
+    image: minio/minio
+    depends_on:
+      - svc
+    ports:
+      - 9000:9000
+      - 9001:9001
+    env_file:
+      - ./development.env
+    volumes:
+      - ./minio/:/data/dev-bucket/
+    command: "server /data --console-address \":9001\""
+    
+  mc:
+    image: minio/mc
+    depends_on:
+      - minio
+    volumes:
+      - ./minio/:/data/dev-bucket/
+      - ./mc/entrypoint.sh:/mc/entrypoint.sh
+    entrypoint: /mc/entrypoint.sh
