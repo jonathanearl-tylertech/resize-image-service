@@ -1,12 +1,14 @@
 import Storage, { StorageConfig } from '../lib/storage';
 import Server from '../lib/server';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const storageConfig: StorageConfig = {
-    accessKeyId: 'minioadmin' ,
-    secretAccessKey: 'minioadmin' ,
-    endpoint: 'http://127.0.0.1:9000' ,
-    s3ForcePathStyle: true, // needed with minio?
-    sslEnabled: 'http://127.0.0.1:9000'.toLowerCase().includes('http://') ? false : true,
+    accessKeyId: process.env.S3_ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY as string,
+    endpoint:  process.env.S3_ENDPOINT as string,   
+    s3ForcePathStyle: true,
+    sslEnabled: (process.env.S3_ENDPOINT as string).toLowerCase().includes('http://') ? false : true,
     signatureVersion: 'v4'
 };
 

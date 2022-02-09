@@ -3,7 +3,7 @@ import S3, { ClientConfiguration } from 'aws-sdk/clients/s3';
 export interface StorageConfig {
     accessKeyId: string,        // 'minioadmin'
     secretAccessKey: string,    // 'minioadmin'
-    endpoint: string,           // 'http:127.0.0.1:9000'
+    endpoint: string,           // 'http://127.0.0.1:9000'
     s3ForcePathStyle: true,     // true
     sslEnabled: boolean,        // false
     signatureVersion: string    // 'v4'
